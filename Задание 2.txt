@@ -1,0 +1,73 @@
+interface Moveable{
+    void move();
+}
+
+interface Stopable{
+    void stop();
+}
+
+abstract class Car{ -> если нет определенного архитектурного замысла на использование разного набора интерфейсов дл€ разных объектов-наследников Car, возможно стоит имплементировать оба метода дл€ абстрактного класса, без контекста оба метода интерфейсов выгл€д€т как применимые к любому автомобилю
+		       в принципе, плюс к этому дл€ абстрактного класса реализаци€ методов интерфейса необ€зательна.
+
+    public Engine engine; -> не рекомендуетс€ объ€вл€ть аттрибуты объекта как public - необходимо заменить на private
+    private String color;
+    private String name;
+    
+    
+    protected void start(){ -> зависит от предполагаемой архитектуры приложени€ объ€вление метода как protected может быть необходимо, но в отрыве от контекста создаетс€ впечатление, что метод будет вызыватьс€ у класса извне, возможно стоит его объ€вить как public
+        System.out.println("Car starting");
+    }
+    
+    abstract void open(); -> дл€ метода не задан модификатор доступа, так что он будет default, возможно стоит €вно объ€вить доступность метода ?если архитектурные потребности не предполагают использование именно default, как и выше считаю что необходим public
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+class LightWeightCar extends Car implements Moveable{
+
+    @Override
+    void open() {
+        System.out.println("Car is open");
+    }
+
+    @Override
+    public void move() {
+        System.out.println("Car is moving");
+    }
+    
+}
+
+class Lorry extends Car, Moveable, Stopable{ -> дл€ интерфейсов необходимо использовать implements
+
+    public void move(){
+        System.out.println("Car is moving");
+    }
+
+    public void stop(){
+        System.out.println("Car is stop");
+    }
+
+    -> не переопределен метод open();
+}
