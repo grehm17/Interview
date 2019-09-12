@@ -1,0 +1,97 @@
+public class Hero implements Externalizable{
+    private String heroClass;
+    private String heroName;
+    private int heroLevel;
+    private int heroHP;
+    private int heroMaxHP;
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(this.getHeroHash());
+        out.writeUTF(this.getHeroClass());
+        out.writeUTF(this.getHeroName());
+        out.writeInt(this.getHeroLevel());
+        out.writeInt(this.getHeroHP());
+        out.writeInt(this.getHeroMaxHP());
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException,RuntimeException {
+        Integer hash = in.readInt();
+        heroClass =  in.readUTF();
+        heroName =  in.readUTF();
+        heroLevel = in.readInt();
+        heroHP =  in.readInt();
+        heroMaxHP =  in.readInt();
+
+        if (!hash.equals(getHeroHash())){
+            throw new RuntimeException("File is damaged");
+        }
+    }
+
+    private int getHeroHash(){
+        return heroLevel + heroHP + heroMaxHP;
+    }
+
+    public String getHeroClass() {
+        return heroClass;
+    }
+
+    public String getHeroName() {
+        return heroName;
+    }
+
+    public int getHeroLevel() {
+        return heroLevel;
+    }
+
+    public int getHeroHP() {
+        return heroHP;
+    }
+
+    public int getHeroMaxHP() {
+        return heroMaxHP;
+    }
+
+    public void setHeroClass(String heroClass) {
+        this.heroClass = heroClass;
+    }
+
+    public void setHeroName(String heroName) {
+        this.heroName = heroName;
+    }
+
+    public void setHeroLevel(Integer heroLevel) {
+        this.heroLevel = heroLevel;
+    }
+
+    public void setHeroHP(Integer heroHP) {
+        this.heroHP = heroHP;
+    }
+
+    public void setHeroMaxHP(Integer heroMaxHP) {
+        this.heroMaxHP = heroMaxHP;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public class HeroLoader {
+    public Hero loadHero(String fileName) throws IOException,ClassNotFoundException{
+        Hero hero = new Hero();
+        FileInputStream fileInputStream = new FileInputStream(fileName);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+        hero = (Hero) objectInputStream.readObject();
+        objectInputStream.close();
+
+        return hero;
+    }
+
+    public void saveHero(String fileName,Hero hero) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+        objectOutputStream.writeObject(hero);
+        objectOutputStream.close();
+    }
+    
+}
