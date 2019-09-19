@@ -1,0 +1,33 @@
+public class Counter {
+    private Lock counterLock = new ReentrantLock();
+    private int count = 0;
+
+    public int getCount(){
+        int retCount = -1;
+        try {
+            if(counterLock.tryLock(10, TimeUnit.MILLISECONDS)){
+                retCount = count;
+            }
+        } catch (InterruptedException e) {
+            return count;
+        }finally{
+            counterLock.unlock();
+        }
+        return count;
+    }
+
+    public int addCount(){
+        int retCount = -1;
+        try {
+            if(counterLock.tryLock(10, TimeUnit.MILLISECONDS)){
+                count = count +1;
+                retCount = count;
+            }
+        } catch (InterruptedException e) {
+            return count;
+        }finally{
+            counterLock.unlock();
+        }
+        return count;
+    }
+}

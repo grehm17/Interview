@@ -1,0 +1,65 @@
+public class Main {
+    final Object monitor = new Object();
+    private boolean flag = false;
+
+    public static void main(String[] args){
+        Main executor = new Main();
+        Thread threadOne = new Thread(){
+            @Override
+            public void run(){
+                executor.ping();
+            }
+        };
+
+        Thread threadTwo = new Thread(){
+            @Override
+            public void run(){
+                executor.pong();
+
+            }
+        };
+
+        threadOne.start();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        threadTwo.start();
+
+    }
+
+    public void ping() {
+        synchronized (monitor) {
+            while (true){
+            try {
+                while (flag) {
+                    monitor.wait();
+                }
+                System.out.println("ping");
+                flag = !flag;
+                monitor.notify();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }}
+    }
+
+    public void pong() {
+        synchronized (monitor) {
+            while (true){
+            try {
+                while (!flag) {
+                    monitor.wait();
+                }
+                System.out.println("pong");
+                flag = !flag;
+                monitor.notify();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }}
+    }
+
+
+}
